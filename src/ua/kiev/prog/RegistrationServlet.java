@@ -29,18 +29,23 @@ public class RegistrationServlet extends HttpServlet {
 
     //ввозвращает список пользователей + статус online/offline
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         StringBuilder sb = new StringBuilder();
-        Set<String> keySet = userMap.getKeySet(); //полуаем множество ключей
-        for (String s: keySet){ //проходимся по множеству, вытаскиваем пользователей, спрашиваем статус
-            sb.append("Name: ");
-            sb.append(s);
-            sb.append(", status: ");
-            if(userMap.getUser(s).isOnline()){
-                sb.append("Online\n");
+        if(AuthorizationServlet.verifyCookie(request)) {
+            Set<String> keySet = userMap.getKeySet(); //полуаем множество ключей
+            for (String s : keySet) { //проходимся по множеству, вытаскиваем пользователей, спрашиваем статус
+                sb.append("Name: ");
+                sb.append(s);
+                sb.append(", status: ");
+                if (userMap.getUser(s).isOnline()) {
+                    sb.append("Online\n");
+                } else {
+                    sb.append("offline\n");
+                }
             }
-            else{
-                sb.append("offline\n");
-            }
+        }
+        else{
+            sb.append("Authorization problem!");
         }
         try(OutputStream os = response.getOutputStream()){
             os.write(sb.toString().getBytes());//получаем массив байт из строки и пишем в исходящий поток подтверждение авторизации
