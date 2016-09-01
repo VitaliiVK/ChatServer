@@ -1,9 +1,6 @@
 package ua.kiev.prog;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -15,15 +12,15 @@ public class AddServlet extends HttpServlet {
 
 	//добавить сообщение
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		if(AuthorizationServlet.verifyCookie(req)){ //проверка Cookie
+		if(AuthorizationServlet.verifyCookie(req)){ // проверка валидности сессии
 			try(InputStream is = req.getInputStream()) {
-				Cookie[] cookies = req.getCookies();
-				String cookieLogin = cookies[0].getValue(); //вытаскиваем login из Cookie
+				HttpSession session = req.getSession(false);
+				String login = (String)session.getAttribute("user_login");
 				byte[] buf = new byte[req.getContentLength()]; //ContentLength может не прийти при работе с браузером (переделать код в цикл)
-				is.read(buf); //считываем в буфер
+				is.read(buf);
 				Message msg = Message.fromJSON(new String(buf)); //получаем стоку из массива байт парсим из строки JSON сообщение
 				if (msg != null) { //если сообщение есть
-					msg.setFrom(cookieLogin); //устанавливаем поле от кого по логину из Cookie
+					msg.setFrom(login); //устанавливаем поле от кого по логину из Cookie
 					msg.setCounter(counter); //нумеруем сообщение
 					msgList.add(msg); //добавляем его в список сообщений
 					counter++; //итеррируем счетчик

@@ -9,9 +9,9 @@ import java.util.List;
 //класс для храниния сообщений
 public class MessageList {
 	
-	private static final MessageList msgList = new MessageList(); //константа, в которую положим единственный обьект MessageList
+	private static final MessageList msgList = new MessageList(); //константа, в которую положим единственный обьект ua.kiev.prog.MessageList
 
-	private final List<Message> list = new ArrayList<Message>(); //список с сообщениями MessageList
+	private final List<Message> list = new ArrayList<Message>(); //список с сообщениями ua.kiev.prog.MessageList
 	
 	public static MessageList getInstance() { //метод возвращающий ссылку на единственный экземпляр класса
 		return msgList;

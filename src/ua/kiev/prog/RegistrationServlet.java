@@ -22,7 +22,7 @@ public class RegistrationServlet extends HttpServlet {
             if (ifReg) {//если пользователя с таким именем еще нет
                 os.write("ok".getBytes());//получаем массив байт из строки и пишем в исходящий поток подтверждение регистрации
             } else {
-                os.write("User with this login already exists!".getBytes());//если такой пользователь уже есть
+                os.write("ua.kiev.prog.User with this login already exists!".getBytes());//если такой пользователь уже есть
             }
         }
     }
@@ -31,7 +31,7 @@ public class RegistrationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         StringBuilder sb = new StringBuilder();
-        if(AuthorizationServlet.verifyCookie(request)) {
+        if(AuthorizationServlet.verifyCookie(request)) { // проверка валидности сессии
             Set<String> keySet = userMap.getKeySet(); //полуаем множество ключей
             for (String s : keySet) { //проходимся по множеству, вытаскиваем пользователей, спрашиваем статус
                 sb.append("Name: ");
@@ -45,7 +45,7 @@ public class RegistrationServlet extends HttpServlet {
             }
         }
         else{
-            sb.append("Authorization problem!");
+            sb.append("Unauthorized request!");
         }
         try(OutputStream os = response.getOutputStream()){
             os.write(sb.toString().getBytes());//получаем массив байт из строки и пишем в исходящий поток подтверждение авторизации
