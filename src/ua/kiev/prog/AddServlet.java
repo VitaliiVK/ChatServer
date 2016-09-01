@@ -1,6 +1,7 @@
 package ua.kiev.prog;
 
 import javax.servlet.http.*;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,9 +17,14 @@ public class AddServlet extends HttpServlet {
 			try(InputStream is = req.getInputStream()) {
 				HttpSession session = req.getSession(false);
 				String login = (String)session.getAttribute("user_login");
-				byte[] buf = new byte[req.getContentLength()]; //ContentLength может не прийти при работе с браузером (переделать код в цикл)
-				is.read(buf);
-				Message msg = Message.fromJSON(new String(buf)); //получаем стоку из массива байт парсим из строки JSON сообщение
+				ByteArrayOutputStream bs= new ByteArrayOutputStream();
+				int redCount;
+				byte[] buf = new byte[1024]; //ContentLength может не прийти при работе с браузером (переделать код в цикл)
+				while ((redCount = is.read(buf)) > 0) {
+					bs.write(buf, 0, redCount);
+				}
+				Message msg = Message.fromJSON(new String(bs.toByteArray())); //получаем стоку из массива байт парсим из строки JSON сообщение
+				bs.close();
 				if (msg != null) { //если сообщение есть
 					msg.setFrom(login); //устанавливаем поле от кого по логину из Cookie
 					msg.setCounter(counter); //нумеруем сообщение
